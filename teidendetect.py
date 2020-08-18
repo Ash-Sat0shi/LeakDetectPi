@@ -27,8 +27,8 @@ PORT = 587
 
 from_addr = gmail_addr				# sender addr
 to_addr = "satoshi.yatabe@shin-shu.co.jp"
-subject = "漏水検知システム　LeakDetectPi-PROTOTYPE"
-body = "漏水を検知しました！！ \n RasPi IP Address is : {0} \n ※電源を入れた初回のメールはテストメールです。".format(myip)
+subject = "停電検知システム　LeakDetectPi-PROTOTYPE"
+body = "停電を検知しました！！ \n RasPi IP Address is : {0} \n ※電源を入れた初回のメールはテストメールです。".format(myip)
 
 msg = MIMEText(body, "plain", "utf-8")
         # prevent 'ascii' codec can't encode characters in position 0-14: ordinal not in range(128) というエラーがでる
@@ -39,7 +39,7 @@ msg["Subject"] = subject
 
 # -- main --
 
-PIN_IN = 24
+PIN_IN = 23
 PIN_OUT = 25
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(PIN_IN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
@@ -49,7 +49,7 @@ try:
     while True:
         flag = GPIO.input(PIN_IN) == GPIO.HIGH
         GPIO.output(PIN_OUT, flag)
-        if flag == True:
+        if flag == False:
             print(flag)
             print(myip)
     # -------------------------------------------------------------------------------------------------------------
@@ -67,12 +67,12 @@ try:
                 print("except: " + str(e))		# in case of error
             else:
                 print("Successfully sent mail to {0}".format(to_addr))	# when succeed
-            time.sleep(30)
+            time.sleep(1)
      # -------------------------------------------------------------------------------------------------------------
         
         else:
             print("FALSE")
-            time.sleep(3)
+            time.sleep(1)
 except KeyboardInterrupt:
     pass
 finally:
