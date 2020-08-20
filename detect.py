@@ -6,6 +6,7 @@
 
 import RPi.GPIO as GPIO
 import time
+import datetime
 
 # for send Gmail
 import smtplib
@@ -27,16 +28,23 @@ from_addr = gmail_addr	# sender addr
 to_addr = "satoshi.yatabe@shin-shu.co.jp"
 subject1 = "漏水検知システム　DetectPi-PROTOTYPE"
 subject2 = "停電検知システム　DetectPi-PROTOTYPE"
-body1 = "漏水を検知しました！！ \n RasPi IP Address is : {0} \n ※電源を入れた初回のメールはテストメールです。".format(myip)
-body2 = "停電を検知しました！！ \n RasPi IP Address is : {0} \n ※電源を入れた初回のメールはテストメールです。".format(myip)
+body1 = "発生時刻 : {0} \n 漏水を検知しました！！ \n RasPi IP Address is : {1} ".format(datetime.datetime.now(), myip)
+body2 = "発生時刻 : {0} \n 停電を検知しました！！ \n RasPi IP Address is : {1} ".format(datetime.datetime.now(), myip)
 
 
-msg = MIMEText(body1, "plain", "utf-8")
+msg1 = MIMEText(body1, "plain", "utf-8")
         # prevent 'ascii' codec can't encode characters in position 0-14: ordinal not in range(128) というエラーがでる
-msg["From"] = from_addr
-msg["To"] = to_addr
-msg["Date"] = formatdate()
-msg["Subject"] = subject1
+msg1["From"] = from_addr
+msg1["To"] = to_addr
+msg1["Date"] = formatdate()
+msg1["Subject"] = subject1
+
+msg2 = MIMEText(body1, "plain", "utf-8")
+        # prevent 'ascii' codec can't encode characters in position 0-14: ordinal not in range(128) というエラーがでる
+msg2["From"] = from_addr
+msg2["To"] = to_addr
+msg2["Date"] = formatdate()
+msg2["Subject"] = subject2
 
 
 # -- main --
@@ -51,21 +59,24 @@ GPIO.setup(PIN_OUT, GPIO.OUT)
 
 try:
     while True:
+        time.sleep(0.1)     # to avoid false positive at the first time python runs
         flag1 = GPIO.input(PIN_IN1) == GPIO.HIGH
         GPIO.output(PIN_OUT, flag1)
         if flag1 == True:
+            print("発生時刻:")
+            print(datetime.datetime.now())
             print("WATER DETECTED!! 漏水を検知しました！！")
     # -------------------------------------------------------------------------------------------------------------
 	# send mail
             try:
                 print("sending mail...")
-                #send = smtplib.SMTP(SMTP, PORT)		# create SMTP object
-                #send.ehlo()
-                #send.starttls()
-                #send.ehlo()
-                #send.login(gmail_addr, gmail_pass)	# Login to Gmail
-                #send.send_message(msg)
-                #send.close()
+                send = smtplib.SMTP(SMTP, PORT)		# create SMTP object
+                send.ehlo()
+                send.starttls()
+                send.ehlo()
+                send.login(gmail_addr, gmail_pass)	# Login to Gmail
+                send.send_message(msg1)
+                send.close()
             except Exception as e:
                 print("except: " + str(e))		# in case of error
             else:
@@ -81,18 +92,20 @@ try:
             flag2 = GPIO.input(PIN_IN2) == GPIO.HIGH
             GPIO.output(PIN_OUT, flag2)
             if flag2 == True:
+                print("発生時刻:")
+                print(datetime.datetime.now())
                 print(" BLACKOUT DETECTED!! 停電を検知しました！！")
                 # -------------------------------------------------------------------------------------------------------------
                 # send mail
                 try:
                     print("sending BLACKOUT mail...")
-                    #send = smtplib.SMTP(SMTP, PORT)		# create SMTP object
-                    #send.ehlo()
-                    #send.starttls()
-                    #send.ehlo()
-                    #send.login(gmail_addr, gmail_pass)	# Login to Gmail
-                    #send.send_message(msg)
-                    #send.close()
+                    send = smtplib.SMTP(SMTP, PORT)		# create SMTP object
+                    send.ehlo()
+                    send.starttls()
+                    send.ehlo()
+                    send.login(gmail_addr, gmail_pass)	# Login to Gmail
+                    send.send_message(msg2)
+                    send.close()
                 except Exception as e:
                     print("except: " + str(e))		# in case of error
                 else:
