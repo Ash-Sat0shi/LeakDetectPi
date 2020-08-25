@@ -73,13 +73,18 @@ try:
     while True:
         time.sleep(0.1)     # to avoid false positive at the first time python runs
         flag1 = GPIO.input(PIN_IN1) == GPIO.HIGH
+        flag2 = GPIO.input(PIN_IN2) == GPIO.HIGH
+        flag3 = GPIO.input(PIN_IN3) == GPIO.HIGH
         GPIO.output(PIN_OUT, flag1)
+        GPIO.output(PIN_OUT, flag2)
+        GPIO.output(PIN_OUT, flag3)
+
         if flag1 == True:
             print("発生時刻:")
             print(datetime.datetime.now())
             print("WATER DETECTED!! 漏水を検知しました！！")
-    # -------------------------------------------------------------------------------------------------------------
-	# send mail
+            # -------------------------------------------------------------------------------------------------------------
+            # send mail
             try:
                 print("sending 漏水 mail...")
                 #send = smtplib.SMTP(SMTP, PORT)		# create SMTP object
@@ -94,66 +99,52 @@ try:
             else:
                 print("Successfully sent WATER LEAKAGE mail to {0}".format(to_addr))	# when succeed
                 time.sleep(3)
-     # -------------------------------------------------------------------------------------------------------------
-        
-        else:
-            print("NO WATER LEAKAGE")
-            
-            msg2 = MIMEText(body2, "plain", "utf-8")
-            flag2 = GPIO.input(PIN_IN2) == GPIO.HIGH
-            GPIO.output(PIN_OUT, flag2)
-            if flag2 == True:
-                print("発生時刻:")
-                print(datetime.datetime.now())
-                print(" BLACKOUT DETECTED!! 停電を検知しました！！")
-                # -------------------------------------------------------------------------------------------------------------
-                # send mail
-                try:
-                    print("sending 停電 mail...")
-                    #send = smtplib.SMTP(SMTP, PORT)		# create SMTP object
-                    #send.ehlo()
-                    #send.starttls()
-                    #send.ehlo()
-                    #send.login(gmail_addr, gmail_pass)	# Login to Gmail
-                    #send.send_message(msg2)
-                    #send.close()
-                except Exception as e:
-                    print("except: " + str(e))		# in case of error
-                else:
-                    print("Successfully sent BLACKOUT mail to {0}".format(to_addr))	# when succeed
-                    time.sleep(3)
+            # -------------------------------------------------------------------------------------------------------------
+        elif flag2 == True:
+            print("発生時刻:")
+            print(datetime.datetime.now())
+            print(" BLACKOUT DETECTED!! 停電を検知しました！！")
+            # -------------------------------------------------------------------------------------------------------------
+            # send mail
+            try:
+                print("sending 停電 mail...")
+                #send = smtplib.SMTP(SMTP, PORT)		# create SMTP object
+                #send.ehlo()
+                #send.starttls()
+                #send.ehlo()
+                #send.login(gmail_addr, gmail_pass)	# Login to Gmail
+                #send.send_message(msg2)
+                #send.close()
+            except Exception as e:
+                print("except: " + str(e))		# in case of error
+            else:
+                print("Successfully sent BLACKOUT mail to {0}".format(to_addr))	# when succeed
                 time.sleep(3)
                 # -------------------------------------------------------------------------------------------------------------
+        elif flag3 == True:
+            print("発生時刻:")
+            print(datetime.datetime.now())
+            print(" TANK LEVEL RISING DETECTED!! 水位上昇を検知しました！！")
+            # -------------------------------------------------------------------------------------------------------------
+            # send mail
+            try:
+                print("sending 水位上昇 mail...")
+                #send = smtplib.SMTP(SMTP, PORT)		# create SMTP object
+                #send.ehlo()
+                #send.starttls()
+                #send.ehlo()
+                #send.login(gmail_addr, gmail_pass)	# Login to Gmail
+                #send.send_message(msg3)
+                #send.close()
+            except Exception as e:
+                print("except: " + str(e))		# in case of error
             else:
-                print("NO BLACKOUT")
-                
-                msg3 = MIMEText(body3, "plain", "utf-8")
-                flag3 = GPIO.input(PIN_IN3) == GPIO.HIGH
-                GPIO.output(PIN_OUT, flag3)
-            
-                if flag3 == True:
-                    print("発生時刻:")
-                    print(datetime.datetime.now())
-                    print(" TANK LEVEL RISING DETECTED!! 水位上昇を検知しました！！")
-                    # -------------------------------------------------------------------------------------------------------------
-                    # send mail
-                    try:
-                        print("sending 水位上昇 mail...")
-                        #send = smtplib.SMTP(SMTP, PORT)		# create SMTP object
-                        #send.ehlo()
-                        #send.starttls()
-                        #send.ehlo()
-                        #send.login(gmail_addr, gmail_pass)	# Login to Gmail
-                        #send.send_message(msg3)
-                        #send.close()
-                    except Exception as e:
-                        print("except: " + str(e))		# in case of error
-                    else:
-                        print("Successfully sent TANK LEVEL RISING mail to {0}".format(to_addr))	# when succeed
-                        time.sleep(3)
-                else:
-                    print("NO TANK LEVEL RISING")
-        time.sleep(3)
+                print("Successfully sent TANK LEVEL RISING mail to {0}".format(to_addr))	# when succeed
+                time.sleep(3)
+        else:
+            print("ALL GREEN")
+            time.sleep(3)
+                    
 except KeyboardInterrupt:
     pass
 finally:
