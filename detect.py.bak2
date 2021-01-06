@@ -30,10 +30,6 @@ subject1 = "漏水検知システム　DetectPi-PROTOTYPE"
 subject2 = "停電検知システム　DetectPi-PROTOTYPE"
 subject3 = "タンク水位検知システム　DetectPi-PROTOTYPE"
 
-body1 = "発生時刻 : {0} \n 漏水を検知しました！！ \n RasPi IP Address is : {1} ".format(datetime.datetime.now(), myip)
-body2 = "発生時刻 : {0} \n 停電を検知しました！！ \n RasPi IP Address is : {1} ".format(datetime.datetime.now(), myip)
-body3 = "発生時刻 : {0} \n タンク水位上昇を検知しました！！ \n RasPi IP Address is : {1} ".format(datetime.datetime.now(), myip)
-
 
 msg1 = MIMEText(body1, "plain", "utf-8")
         # prevent 'ascii' codec can't encode characters in position 0-14: ordinal not in range(128) というエラーがでる
@@ -75,74 +71,86 @@ try:
         flag1 = GPIO.input(PIN_IN1) == GPIO.HIGH
         flag2 = GPIO.input(PIN_IN2) == GPIO.HIGH
         flag3 = GPIO.input(PIN_IN3) == GPIO.HIGH
-        GPIO.output(PIN_OUT, flag1)
-        GPIO.output(PIN_OUT, flag2)
-        GPIO.output(PIN_OUT, flag3)
+        
+        
 
         if flag1 == True:
             print("発生時刻:")
             print(datetime.datetime.now())
-            print("WATER DETECTED!! 漏水を検知しました！！")
+            print("WATER DETECTED!! 漏水を検知しました！！ time : {0}".format(datetime.datetime.now))
+            body1 = "発生時刻 : {0} \n 漏水を検知しました！！ \n RasPi IP Address is : {1} ".format(datetime.datetime.now(), myip)
             # -------------------------------------------------------------------------------------------------------------
             # send mail
             try:
+                GPIO.output(PIN_OUT, flag1)
                 print("sending 漏水 mail...")
-                #send = smtplib.SMTP(SMTP, PORT)		# create SMTP object
-                #send.ehlo()
-                #send.starttls()
-                #send.ehlo()
-                #send.login(gmail_addr, gmail_pass)	# Login to Gmail
-                #send.send_message(msg1)
-                #send.close()
+                send = smtplib.SMTP(SMTP, PORT)		# create SMTP object
+                send.ehlo()
+                send.starttls()
+                send.ehlo()
+                send.login(gmail_addr, gmail_pass)	# Login to Gmail
+                send.send_message(msg1)
+                send.close()
             except Exception as e:
                 print("except: " + str(e))		# in case of error
             else:
                 print("Successfully sent WATER LEAKAGE mail to {0}".format(to_addr))	# when succeed
+                print(body1)
                 time.sleep(3)
+                GPIO.output(PIN_OUT, 0)
             # -------------------------------------------------------------------------------------------------------------
         elif flag2 == True:
             print("発生時刻:")
             print(datetime.datetime.now())
-            print(" BLACKOUT DETECTED!! 停電を検知しました！！")
+            print(" BLACKOUT DETECTED!! 停電を検知しました！！ time : {0}".format(datetime.datetime.now))
+            body2 = "発生時刻 : {0} \n 停電を検知しました！！ \n RasPi IP Address is : {1} ".format(datetime.datetime.now(), myip)
             # -------------------------------------------------------------------------------------------------------------
             # send mail
             try:
+                GPIO.output(PIN_OUT, flag2)
                 print("sending 停電 mail...")
-                #send = smtplib.SMTP(SMTP, PORT)		# create SMTP object
-                #send.ehlo()
-                #send.starttls()
-                #send.ehlo()
-                #send.login(gmail_addr, gmail_pass)	# Login to Gmail
-                #send.send_message(msg2)
-                #send.close()
+                send = smtplib.SMTP(SMTP, PORT)		# create SMTP object
+                send.ehlo()
+                send.starttls()
+                send.ehlo()
+                send.login(gmail_addr, gmail_pass)	# Login to Gmail
+                send.send_message(msg2)
+                send.close()
             except Exception as e:
                 print("except: " + str(e))		# in case of error
             else:
                 print("Successfully sent BLACKOUT mail to {0}".format(to_addr))	# when succeed
+                print(body2)
                 time.sleep(3)
+                GPIO.output(PIN_OUT, 0)
                 # -------------------------------------------------------------------------------------------------------------
         elif flag3 == True:
             print("発生時刻:")
             print(datetime.datetime.now())
-            print(" TANK LEVEL RISING DETECTED!! 水位上昇を検知しました！！")
+            print(" TANK LEVEL RISING DETECTED!! 水位上昇を検知しました！！ time : {0}".format(datetime.datetime.now))
+            body3 = "発生時刻 : {0} \n タンク水位上昇を検知しました！！ \n RasPi IP Address is : {1} ".format(datetime.datetime.now(), myip)
             # -------------------------------------------------------------------------------------------------------------
             # send mail
             try:
+                GPIO.output(PIN_OUT, flag3)
                 print("sending 水位上昇 mail...")
-                #send = smtplib.SMTP(SMTP, PORT)		# create SMTP object
-                #send.ehlo()
-                #send.starttls()
-                #send.ehlo()
-                #send.login(gmail_addr, gmail_pass)	# Login to Gmail
-                #send.send_message(msg3)
-                #send.close()
+                send = smtplib.SMTP(SMTP, PORT)		# create SMTP object
+                send.ehlo()
+                send.starttls()
+                send.ehlo()
+                send.login(gmail_addr, gmail_pass)	# Login to Gmail
+                send.send_message(msg3)
+                send.close()
             except Exception as e:
                 print("except: " + str(e))		# in case of error
             else:
                 print("Successfully sent TANK LEVEL RISING mail to {0}".format(to_addr))	# when succeed
+                print(body3)
                 time.sleep(3)
+                GPIO.output(PIN_OUT, 0)
         else:
             print("ALL GREEN")
+            GPIO.output(PIN_OUT, 0)
             time.sleep(3)
                     
 except KeyboardInterrupt:
