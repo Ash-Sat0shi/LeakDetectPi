@@ -117,7 +117,7 @@ try:
             time.sleep(1)
             # -------------------------------------------------------------------------------------------------------------
             # send mail
-            if counter == 20:
+            if counter == 5:
                 try:
                     GPIO.output(PIN_OUT, flag2)
                     print("sending 停電 mail...")
@@ -151,7 +151,7 @@ try:
             msg3["Subject"] = subject3
             # -------------------------------------------------------------------------------------------------------------
             # send mail
-            if counter == 20:
+            if counter == 5:
                 try:
                     GPIO.output(PIN_OUT, flag3)
                     print("sending 水位上昇 mail...")
