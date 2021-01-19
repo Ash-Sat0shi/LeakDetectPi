@@ -130,6 +130,8 @@ try:
                     #send.close()
                 except Exception as e:
                     print("except: " + str(e))		# in case of error
+                    with open('log.txt', mode='a') as f:
+                        f.write('メール送信エラー' + str(e) + '\n')
                 else:
                     print("Successfully sent BLACKOUT mail to {0}".format(to_addr))	# when succeed
                     print(body2)
@@ -164,6 +166,8 @@ try:
                     #send.close()
                 except Exception as e:
                     print("except: " + str(e))		# in case of error
+                    with open('log.txt', mode='a') as f:
+                        f.write('メール送信エラー' + str(e) + '\n')
                 else:
                     print("Successfully sent TANK LEVEL RISING mail to {0}".format(to_addr))	# when succeed
                     print(body3)
