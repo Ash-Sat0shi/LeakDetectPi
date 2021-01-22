@@ -45,7 +45,7 @@ counter = 0
 
 try:
     while True:
-        time.sleep(0.1)     # to avoid false positive at the first time python runs
+        time.sleep(1)     # to avoid false positive at the first time python runs
         flag1 = GPIO.input(PIN_IN1) == GPIO.HIGH
         flag2 = GPIO.input(PIN_IN2) == GPIO.HIGH
         flag3 = GPIO.input(PIN_IN3) == GPIO.HIGH
@@ -67,6 +67,7 @@ try:
             msg1["To"] = to_addr
             msg1["Date"] = formatdate()
             msg1["Subject"] = subject1
+            
             time.sleep(1)
 
             # -------------------------------------------------------------------------------------------------------------
@@ -96,7 +97,7 @@ try:
                     with open('log.txt', mode='a') as f:
                         f.write('……メール送信完了' + '\n')
                     print(body1)
-                    time.sleep(10)
+                    time.sleep(10080)
                     GPIO.output(PIN_OUT, 0)
             # -------------------------------------------------------------------------------------------------------------
         elif flag2 == True:
@@ -134,7 +135,10 @@ try:
                         f.write('メール送信エラー' + str(e) + '\n')
                 else:
                     print("Successfully sent BLACKOUT mail to {0}".format(to_addr))	# when succeed
+                    with open('log.txt', mode='a') as f:
+                        f.write('……メール送信完了' + '\n')
                     print(body2)
+                    time.sleep(10080)
                     GPIO.output(PIN_OUT, 0)
                 # -------------------------------------------------------------------------------------------------------------
         elif flag3 == True:
@@ -151,6 +155,8 @@ try:
             msg3["To"] = to_addr
             msg3["Date"] = formatdate()
             msg3["Subject"] = subject3
+            
+            time.sleep(1)
             # -------------------------------------------------------------------------------------------------------------
             # send mail
             if counter == 5:
@@ -170,13 +176,15 @@ try:
                         f.write('メール送信エラー' + str(e) + '\n')
                 else:
                     print("Successfully sent TANK LEVEL RISING mail to {0}".format(to_addr))	# when succeed
+                    with open('log.txt', mode='a') as f:
+                        f.write('……メール送信完了' + '\n')
                     print(body3)
-                    time.sleep(1)
+                    time.sleep(10080)
                     GPIO.output(PIN_OUT, 0)
         else:
             print("ALL GREEN")
             GPIO.output(PIN_OUT, 0)
-            time.sleep(1)
+            time.sleep(4)
             counter = 0
                     
 except KeyboardInterrupt:
